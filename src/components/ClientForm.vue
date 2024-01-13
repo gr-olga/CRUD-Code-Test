@@ -1,6 +1,8 @@
 <script setup>
 import {reactive} from 'vue';
 import {store} from "@/store";
+import {isUserExist} from "@/utils/utils";
+import {isValidPhoneNumber} from "libphonenumber-js";
 
 const state = reactive({
   formData: {
@@ -15,27 +17,17 @@ const state = reactive({
 
 function submitForm(event) {
   event.preventDefault();
-  validatePhone(state.formData.phoneNumber)
- store.commit('setUsers', state.formData);
-  console.log(state.formData);
-  console.log(store.state.users);
-}
-
-function validatePhone(phone) {
-  //TODO must use a lib)
-  if (/^\d{10}$/.test(phone)) {
-    return
-  } else {
-    alert("Phone number invalid!")
-  }
+  if (isUserExist(state.formData, store.state.users)) return alert("User already exists!")
+  if (isValidPhoneNumber(state.formData.phoneNumber)) return console.log(state.formData.phoneNumber)
+  store.commit('setUsers', state.formData);
 }
 </script>
 
 <template>
-  <div >
-    <form @submit.prevent="submitForm" class="form-wrapper" >
+  <div>
+    <form @submit.prevent="submitForm" class="form-wrapper">
       <div class="input-wrapper">
-        <label  for="firstname">First Name:</label>
+        <label for="firstname">First Name:</label>
         <input type="text" id="firstname" v-model="state.formData.firstName" required>
       </div>
 
@@ -73,7 +65,7 @@ function validatePhone(phone) {
 
 
 <style scoped>
-.form-wrapper{
+.form-wrapper {
   display: flex;
   flex-direction: column;
   align-items: self-start;
@@ -83,12 +75,14 @@ function validatePhone(phone) {
   border: 1px solid silver;
   border-radius: 5px;
 }
+
 .input-wrapper {
   display: flex;
   flex-direction: column;
   align-items: self-start;
   width: 100%;
 }
+
 input {
   color: black;
   border: 1px solid silver;
@@ -98,6 +92,7 @@ input {
   font-size: 16px;
   width: 50%;
 }
+
 button {
   color: black;
   border: none;
@@ -108,9 +103,11 @@ button {
   background-color: darkseagreen;
   margin: 15px 5px;
 }
+
 button:hover {
- background-color: #497349;
+  background-color: #497349;
 }
+
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
