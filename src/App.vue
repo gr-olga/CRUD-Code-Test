@@ -1,28 +1,26 @@
+<script setup>
+import ClientForm from "@/components/ClientForm.vue";
+import {store} from "@/store";
+import {computed} from "vue";
+
+const users = computed( () => store.state.users);
+</script>
+
 <template>
   <div id="app">
     <h1>Client Form</h1>
     <div>
-      <client-form @form-submitted="handleFormSubmission" />
+      <client-form/>
+      <div v-for="(user, index) in users" :key="index">
+        <p> {{ user.firstName }}</p>
+        <p> {{ user.lastName }}</p>
+        <p> {{ user.dateOfBirth }}</p>
+        <p> {{ user.phoneNumber }}</p>
+        <p> {{ user.email }}</p>
+      </div>
     </div>
   </div>
 </template>
-
-<script>
-import { defineComponent } from 'vue';
-import ClientForm from '@/components/ClientForm.vue';
-
-export default defineComponent({
-  components: {
-    ClientForm,
-  },
-  methods: {
-    handleFormSubmission(formData) {
-      // You can handle the form submission logic here
-      console.log('Form submitted with data:', formData);
-    },
-  },
-});
-</script>
 
 <style>
 #app {

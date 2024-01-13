@@ -1,26 +1,34 @@
+<script setup>
+import {reactive} from 'vue';
+import {store} from "@/store";
 
-<script>
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  data() {
-    return {
-      formData: {
-        firstName: '',
-        lastName: '',
-        dateOfBirth: '',
-        phoneNumber: '',
-        email: '',
-        bankAccountNumber: '',
-      },
-    };
-  },
-  methods: {
-    submitForm() {
-      this.$emit('form-submitted', this.formData);
-    },
-  },
+const state = reactive({
+  formData: {
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    phoneNumber: '',
+    email: '',
+    bankAccountNumber: '',
+  }
 });
+
+function submitForm(event) {
+  event.preventDefault();
+  validatePhone(state.formData.phoneNumber)
+ store.commit('setUsers', state.formData);
+  console.log(state.formData);
+  console.log(store.state.users);
+}
+
+function validatePhone(phone) {
+  //TODO must use a lib)
+  if (/^\d{10}$/.test(phone)) {
+    return
+  } else {
+    alert("Phone number invalid!")
+  }
+}
 </script>
 
 <template>
@@ -28,33 +36,32 @@ export default defineComponent({
     <form @submit.prevent="submitForm" class="form-wrapper" >
       <div class="input-wrapper">
         <label  for="firstname">First Name:</label>
-        <input type="text" id="firstname" v-model="formData.firstName" required>
-<!--        <p class="error" :style="{ display: !valid }">{{ error }}</p>-->
+        <input type="text" id="firstname" v-model="state.formData.firstName" required>
       </div>
 
       <div class="input-wrapper">
         <label for="lastname">Last Name:</label>
-        <input type="text" id="lastname" v-model="formData.lastName" required>
+        <input type="text" id="lastname" v-model="state.formData.lastName" required>
       </div>
 
       <div class="input-wrapper">
         <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" v-model="formData.dateOfBirth" required>
+        <input type="date" id="dob" v-model="state.formData.dateOfBirth" required>
       </div>
 
       <div class="input-wrapper">
         <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" v-model="formData.phoneNumber" required>
+        <input type="tel" id="phone" v-model="state.formData.phoneNumber" required>
       </div>
 
       <div class="input-wrapper">
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="formData.email" required>
+        <input type="email" id="email" v-model="state.formData.email" required>
       </div>
 
       <div class="input-wrapper">
         <label for="bank">Bank Account Number:</label>
-        <input type="text" id="bank" v-model="formData.bankAccountNumber" required>
+        <input type="text" id="bank" v-model="state.formData.bankAccountNumber" required>
       </div>
 
       <div>
@@ -81,11 +88,6 @@ export default defineComponent({
   flex-direction: column;
   align-items: self-start;
   width: 100%;
-}
-.error {
-  color: red;
-  font-weight: bold;
-  margin: 0;
 }
 input {
   color: black;
