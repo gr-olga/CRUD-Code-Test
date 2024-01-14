@@ -1,9 +1,5 @@
 <script setup>
 import ClientForm from "@/components/ClientForm.vue";
-import {store} from "@/store";
-import {computed} from "vue";
-
-const users = computed( () => store.state.users);
 </script>
 
 <template>
@@ -11,13 +7,6 @@ const users = computed( () => store.state.users);
     <h1>Client Form</h1>
     <div>
       <client-form/>
-      <div v-for="(user, index) in users" :key="index">
-        <p> {{ user.firstName }}</p>
-        <p> {{ user.lastName }}</p>
-        <p> {{ user.dateOfBirth }}</p>
-        <p> {{ user.phoneNumber }}</p>
-        <p> {{ user.email }}</p>
-      </div>
     </div>
   </div>
 </template>
