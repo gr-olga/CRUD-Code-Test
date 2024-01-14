@@ -1,4 +1,4 @@
-import {isBankAccountNumberValid, isUserExist} from "@/utils/utils";
+import {isBankAccountNumberValid, isEmailUnique, isUserExist} from "@/utils/utils";
 
 describe('Utils', () => {
     describe('isUserExist', () => {
@@ -44,6 +44,22 @@ describe('Utils', () => {
             expect(isUserExist(user, users)).toBe(false);
         });
     });
+
+    describe('isEmailUnique', () => {
+        const user1 = {firstName: 'Anna', lastName: 'Hoe', dateOfBirth: '2000-01-01', email: 'aaa@tt.com'};
+        const user2 = {firstName: 'Jane', lastName: 'Doe', dateOfBirth: '1990-01-01', email: 'rrr@tt.com'};
+        const user3 = {firstName: 'John', lastName: 'Smith', dateOfBirth: '1990-01-01', email: 'ddd@tt.com'};
+        const users = [user1, user2, user3]
+
+        it('should return true if email is unique', () => {
+            expect(isEmailUnique('fff@gg.com', users)).toBe(true);
+        })
+
+        it('should return false if email is not unique', () => {
+            expect(isEmailUnique(user1.email, users)).toBe(false);
+        })
+    });
+
     describe('isBankAccountNumberValid', () => {
         it('should return true if bank account number is valid', () => {
             expect(isBankAccountNumberValid('123456789012')).toBe(true);

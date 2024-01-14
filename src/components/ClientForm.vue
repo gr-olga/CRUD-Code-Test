@@ -1,7 +1,7 @@
 <script setup>
 import {computed, reactive} from 'vue';
 import {store} from "@/store";
-import {isBankAccountNumberValid, isUserExist} from "@/utils/utils";
+import {isBankAccountNumberValid, isEmailUnique, isUserExist} from "@/utils/utils";
 import {isValidPhoneNumber} from "libphonenumber-js";
 
 const state = reactive({
@@ -34,17 +34,25 @@ function submitForm(event) {
   const {formData} = state;
   state.showError = false;
   event.preventDefault();
+
   if (!isValidPhoneNum.value) {
     state.showError = true;
     return;
   }
+
   if (!isBankAccountNumberValidation.value) {
     state.showError = true;
     return;
   }
+
   if (isUserExist(formData, store.state.users)) {
     return alert("User already exists!");
   }
+
+  if(!isEmailUnique(formData.email, store.state.users)) {
+    return alert("Email already exists!");
+  }
+
   store.commit('setUsers', formData);
   resetState();
 }
