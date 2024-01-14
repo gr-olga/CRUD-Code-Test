@@ -1,7 +1,7 @@
 <script setup>
-import {reactive} from 'vue';
+import {computed, reactive} from 'vue';
 import {store} from "@/store";
-import {isUserExist} from "@/utils/utils";
+import {isBankAccountNumberValid, isUserExist} from "@/utils/utils";
 import {isValidPhoneNumber} from "libphonenumber-js";
 
 const state = reactive({
@@ -12,14 +12,41 @@ const state = reactive({
     phoneNumber: '',
     email: '',
     bankAccountNumber: '',
-  }
+  },
+  showError: false
 });
 
+const isBankAccountNumberValidation = computed(() => isBankAccountNumberValid(state.formData.bankAccountNumber));
+const isValidPhoneNum = computed(() => isValidPhoneNumber(state.formData.phoneNumber));
+
+function resetState() {
+  state.formData = {
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    phoneNumber: '',
+    email: '',
+    bankAccountNumber: '',
+  }
+}
+
 function submitForm(event) {
+  const {formData} = state;
+  state.showError = false;
   event.preventDefault();
-  if (isUserExist(state.formData, store.state.users)) return alert("User already exists!")
-  if (isValidPhoneNumber(state.formData.phoneNumber)) return console.log(state.formData.phoneNumber)
-  store.commit('setUsers', state.formData);
+  if (!isValidPhoneNum.value) {
+    state.showError = true;
+    return;
+  }
+  if (!isBankAccountNumberValidation.value) {
+    state.showError = true;
+    return;
+  }
+  if (isUserExist(formData, store.state.users)) {
+    return alert("User already exists!");
+  }
+  store.commit('setUsers', formData);
+  resetState();
 }
 </script>
 
@@ -44,6 +71,7 @@ function submitForm(event) {
       <div class="input-wrapper">
         <label for="phone">Phone Number:</label>
         <input type="tel" id="phone" v-model="state.formData.phoneNumber" required>
+        <p v-if="state.showError && !isValidPhoneNum" style="color: red">Phone number is not valid</p>
       </div>
 
       <div class="input-wrapper">
@@ -54,6 +82,7 @@ function submitForm(event) {
       <div class="input-wrapper">
         <label for="bank">Bank Account Number:</label>
         <input type="text" id="bank" v-model="state.formData.bankAccountNumber" required>
+        <p v-if="state.showError && !isBankAccountNumberValidation" style="color: red">Bank account is not valid</p>
       </div>
 
       <div>
